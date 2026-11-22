@@ -1,9 +1,11 @@
-const urlBackend = "http://localhost:3000";
+const urlBackend = "https://musicas-beckend.vercel.app";
 const listaMusicas = document.getElementById("listaMusicas");
 
 async function buscarMusicas() {
     const resposta = await fetch(urlBackend);
     const musicas = await resposta.json();
+
+    listaMusicas.innerHTML = "";
 
     musicas.forEach((musica) => {
         listaMusicas.innerHTML += `
@@ -13,7 +15,7 @@ async function buscarMusicas() {
                 <p class="detalhes">${musica.genero} | ${musica.ano} | ${musica.duracao} min</p>
                 <div class="acoes">
                     <a class="editar" href="editar.html?id=${musica.id}">Editar</a>
-                    <button class="apagar">Apagar</button>
+                    <button class="apagar" onclick="apagarMusica(${musica.id})">Apagar</button>
                 </div>
             </article>
         `;
@@ -23,5 +25,12 @@ async function buscarMusicas() {
 buscarMusicas();
 
 async function apagarMusica(id) {
+    const resposta = await fetch(`${urlBackend}/apagar/${id}`, {
+        method: "DELETE"
+    });
 
+    const resultado = await resposta.json();
+    alert(resultado.mensagem);
+
+    window.location.reload();
 }
